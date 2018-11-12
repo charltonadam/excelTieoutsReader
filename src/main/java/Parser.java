@@ -1,3 +1,5 @@
+import org.apache.poi.sl.usermodel.Sheet;
+
 public class Parser {
 
     public Node parseCell(String formula) {
@@ -127,7 +129,15 @@ public class Parser {
 
 
     private static double resolveVariable(String variable) {
-        return 7;
+        int row, column;
+        if(variable.charAt(0) > 64) {
+            //variable off of the excel file
+            column = variable.charAt(0) - 65;
+            row =  variable.charAt(1) - 49;
+            return Main.testingSheet.getRow(row).getCell(column).getNumericCellValue();
+        } else {
+            return Double.parseDouble(variable);
+        }
     }
 
 

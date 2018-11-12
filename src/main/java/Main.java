@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 public class Main {
 
-    public static final String rulesPath = "./adamsTestWorkbook.xlsx";
+    public static final String rulesPath = "./exampleRules.xlsx";
     public static final String testingPath = "./exampleReport.xlsx";
 
     public static Workbook testingBook;
@@ -21,24 +21,25 @@ public class Main {
         testingBook = WorkbookFactory.create(new File(testingPath));
         testingSheet = testingBook.getSheetAt(0);
 
-        System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
-
         Sheet sheet = workbook.getSheetAt(0);
         DataFormatter dataFormatter = new DataFormatter();
 
 
 
         Parser p = new Parser();
-        Parser.Node n = p.parseCell("5+7*9");
 
-        System.out.println(n.execute());
+
 
 
         for(Row row: sheet) {
-
+            Parser.Node n = null;
             for(Cell cell: row) {
-                System.out.println(cell);
-                System.out.println(cell.getCellTypeEnum());
+                if(cell.getCellTypeEnum() == CellType.FORMULA) {
+                    n = p.parseCell(cell.getCellFormula());
+                }
+                if(n != null) {
+                    System.out.println(n.execute() + " == " + testingSheet.getRow(row.getRowNum()).getCell(cell.getColumnIndex()));
+                }
             }
             System.out.println();
         }
